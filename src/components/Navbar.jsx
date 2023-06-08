@@ -10,16 +10,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSearchTerm } from "../features/services/contactSlice";
 import { useGetContactsQuery } from "../features/api/contactApi";
 import Cookies from "js-cookie";
+import { useLogoutMutation } from "../features/api/authApi";
+import { removeUser } from "../features/services/authSlice";
 
 const Navbar = () => {
+  const user =JSON.parse(Cookies.get("user"));
+  console.log(user);
+
   const nav = useNavigate()
   const token = Cookies.get('token')
   const [show,setShow] = useState(false)
-  const [drop,setDrop] = useState(false)
+  const [drop, setDrop] = useState(false)
+  const [logout] = useLogoutMutation();
+  const navigate = useNavigate();
+  
   const dispatch = useDispatch()
   const searchTerm = useSelector((state) => state.contactSlice.searchTerm);
   const {data} = useGetContactsQuery(token)
   console.log(data)
+  const logoutHandler = async () => {
+    const data = await logout(token);
+    dispatch(removeUser());
+    console.log(data);
+    navigate("/login");
+
+  }
   return (
     <div>
       <nav className="bg-gray-200 border-gray-200 dark:bg-gray-900">
@@ -101,17 +116,17 @@ const Navbar = () => {
                 className="flex flex-col text-sm text-gray-700 dark:text-gray-200 cursor-pointer"
                 // aria-labelledby="dropdownDefaultButton"
               >
-                {/* <li className="flex items-center gap-3 px-4 py-2 hover:bg-primary rounded-t-lg hover:text-white">
+                <li className="flex items-center gap-3 px-4 py-2 hover:bg-primary rounded-t-lg hover:text-white">
                   <div className=" text-black opacity-50 text-3xl">
                     <CgProfile />
                   </div>
                   <div>
-                    <p className="font-bold ">Name</p>
-                    <p>gmail@gmail.com</p>
+                      <p className="font-bold ">{user?.name}</p>
+                      <p>{user?.email}</p>
                   </div>
                 </li>
-                <hr /> */}
-                <li onClick={() => dispatch()} className="text-center px-4 py-2 hover:bg-primary rounded-lg hover:text-white">
+                <hr />
+                <li onClick={logoutHandler} className="text-center px-4 py-2 hover:bg-primary rounded-lg hover:text-white">
                   <p className="flex items-center  gap-4  font-bold">
                     {" "}
                     <LuLogOut className="  text-2xl" />

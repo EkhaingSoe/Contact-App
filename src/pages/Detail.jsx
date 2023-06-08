@@ -8,11 +8,22 @@ import { BsPerson } from "react-icons/bs";
 import { RiUserHeartLine } from "react-icons/ri";
 import { BiPencil } from "react-icons/bi";
 import { LuTrash } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { AiTwotoneHome } from "react-icons/ai";
 import Sidebar from "../components/Sidebar";
+import Cookies from "js-cookie";
+import { useSingleContactQuery } from "../features/api/contactApi";
+
 
 const Detail = () => {
+
+  const { id } = useParams();
+  const token = Cookies.get("token");
+  const { data } = useSingleContactQuery({ token, id });
+  const singleContact = data?.contact;
+  console.log(singleContact);
+
+ 
   return (
     <div>
       <Navbar />
@@ -62,30 +73,36 @@ const Detail = () => {
           </ul>
         </div>
       </aside> */}
-      <Sidebar/>
-      <div className="flex h-screen   lg:hidden sm:ml-60 justify-center mt-32">
+      {/* <Sidebar/> */}
+      <div className="flex    lg:hidden  justify-center mt-14">
         <div className="">
           <div className="bg-primary  mx-auto mb-5 w-24 h-24 flex text-center justify-center items-center rounded-full">
             <BsPerson className="text-6xl text-white" />
           </div>
           <h1 className="text-center text-lg text-primary mb-5 ">
-            Ei Khaing Soe
+            {singleContact?.name}
           </h1>
           <div className="inline-flex rounded-md mb-5 shadow-sm" role="group">
-            <button
+            <Link to={'/favorite'}>
+              <button
               type="button"
               className="inline-flex rounded-l-lg items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-primary hover:text-white  dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
             >
               <RiUserHeartLine className="mr-2" />
               Add to Favarite
             </button>
-            <button
+            </Link>
+            
+            <Link to={`/edit/${id}`}>
+               <button
               type="button"
               className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-primary hover:text-white  dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
             >
               <BiPencil className="mr-2" />
               Edit
             </button>
+            </Link>
+           
             <button
               type="button"
               className="inline-flex rounded-r-lg items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-primary hover:text-white  dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
@@ -104,7 +121,7 @@ const Detail = () => {
                 <li className="py-3 sm:py-4 hover:text-primary">
                   <div className="flex items-center justify-between space-x-4">
                     <div>Phone</div>
-                    <div className=" text-bold text-base">09456639939</div>
+                    <div className=" text-bold text-base">{singleContact?.phone}</div>
                     {/*                             
                                         <div className="inline-flex items-center text-base font-semibold hover:text-primary text-gray-900 dark:text-white">
                                             09456639939
@@ -115,7 +132,7 @@ const Detail = () => {
                   <div className="flex items-center hover:text-primary justify-between space-x-4">
                     <div>Email</div>
                     <div className=" text-bold text-base">
-                      eikhaingsoe@gmail.com
+                      {singleContact?.email}
                     </div>
 
                     {/* <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
@@ -125,10 +142,10 @@ const Detail = () => {
                 </li>
 
                 <li className="pt-3 pb-0 sm:pt-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center hover:text-primary justify-between">
                     <div>Address</div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      Yangon
+                    <div className="inline-flex items-center text-base font-semibold  dark:text-white">
+                     {singleContact?.address}
                     </div>
                   </div>
                 </li>

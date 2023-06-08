@@ -33,10 +33,11 @@ const ContactTable = () => {
     dispatch(addToFav(contact));
   };
 
-  const [deleteContact] = useDeleteContactMutation();
-  const deleteHandler = async () => {
-    const deleteData = await deleteContact();
-  };
+  const [deleteContact] = useDeleteContactMutation(token);
+  const deleteHandler = (id, token) => {
+    const data = deleteContact({ id, token });
+    console.log(data);
+  }
   const { data } = useGetContactsQuery(token);
 
   const dispatch = useDispatch();
@@ -45,6 +46,9 @@ const ContactTable = () => {
   useEffect(() => {
     dispatch(addContacts(data?.contacts?.data));
   }, [data]);
+  const detailHandler = (id) => {
+    nav(`/detail/${id}`)
+  }
 
   return (
     <div>
@@ -109,7 +113,8 @@ const ContactTable = () => {
                       </a>
                     </td>
                   </tr>
-                  <tr className="bg-white border-b text-black lg:hidden ">
+                  
+                  <tr  onClick={()=>detailHandler(contact?.id)} className="bg-white border-b cursor-pointer text-black lg:hidden ">
                     <td
                       scope="row"
                       colSpan={4}
@@ -153,11 +158,7 @@ const ContactTable = () => {
                                 </td>
                               </tr>
                               <tr
-                                onClick={async () =>
-                                  await deleteContact({
-                                    id: contact?.id,
-                                    token,
-                                  })
+                                onClick={()=>deleteHandler({id:contact?.id,token})
                                 }
                                 className="flex items-center gap-3 hover:bg-primary hover:text-white px-3 py-2"
                               >
